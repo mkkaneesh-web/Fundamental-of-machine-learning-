@@ -1,0 +1,71 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import accuracy_score, confusion_matrix
+
+# Sample dataset
+# Features: Income, Debt, Payment History (1 = Good, 0 = Poor)
+X = np.array([
+    [50000, 10000, 1],
+    [60000, 15000, 1],
+    [25000, 20000, 0],
+    [30000, 25000, 0],
+    [80000, 10000, 1],
+    [20000, 18000, 0],
+    [70000, 12000, 1],
+    [35000, 22000, 0],
+    [90000, 15000, 1],
+    [40000, 30000, 0],
+    [65000, 18000, 1],
+    [28000, 24000, 0]
+])
+
+# Credit score categories
+# 1 = Good, 0 = Poor
+y = np.array([1, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0])
+
+# Split dataset
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.25, random_state=42
+)
+
+# Train the model
+model = DecisionTreeClassifier(random_state=42)
+model.fit(X_train, y_train)
+
+# Make predictions
+y_pred = model.predict(X_test)
+
+# Calculate accuracy
+accuracy = accuracy_score(y_test, y_pred)
+print("Actual Credit Scores:", y_test)
+print("Predicted Credit Scores:", y_pred)
+print("Model Accuracy:", round(accuracy * 100, 2), "%")
+
+# Confusion matrix
+cm = confusion_matrix(y_test, y_pred, labels=[0, 1])
+
+# Visualize the results
+plt.figure(figsize=(10, 4))
+
+plt.subplot(1, 2, 1)
+plt.bar(["Poor", "Good"], [sum(y == 0), sum(y == 1)])
+plt.title("Credit Score Distribution")
+plt.xlabel("Credit Score Category")
+plt.ylabel("Number of People")
+
+plt.subplot(1, 2, 2)
+plt.imshow(cm, cmap="Blues")
+plt.title("Confusion Matrix")
+plt.xlabel("Predicted Score")
+plt.ylabel("Actual Score")
+plt.xticks([0, 1], ["Poor", "Good"])
+plt.yticks([0, 1], ["Poor", "Good"])
+
+for i in range(2):
+    for j in range(2):
+        plt.text(j, i, cm[i, j], ha="center", va="center")
+
+plt.tight_layout()
+plt.show()
